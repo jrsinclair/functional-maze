@@ -1,0 +1,47 @@
+{
+    "env": {
+        "browser": true,
+        "jquery": false,
+        "node": true
+    },
+    "globals": {
+        "require": true,
+        "module": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "plugins": ["extra-rules"],
+    "rules": {
+        "no-cond-assign": [2, "always"],
+        "no-constant-condition": 2,
+        "no-invalid-regexp": 2,
+        "no-negated-in-lhs": 2,
+        "no-obj-calls": 2,
+        "no-unreachable": 2,
+        "no-unused-vars": 2,
+        "use-isnan": 2,
+        "valid-jsdoc": 2,
+        "radix": 2,
+        "wrap-iife": 2,
+        "dot-location": [2, "property"],
+        "no-multi-spaces": 0,
+        "global-strict": 0,
+        "quotes": [1, "single"],
+        "camelcase": 2,
+        "no-underscore-dangle": 0,
+        "no-implied-eval": 2,
+        "key-spacing": [2, { "align": "value" }],
+        "one-var": [2, "always"],
+        "complexity": [2, 5],
+        "max-statements": [2, 15],
+        "max-depth": [1, 2],
+        "max-len": [2, 120],
+        "indent": [2, 4],
+        "consistent-return": 0,
+        "no-undef": 2,
+
+        "extra-rules/potential-point-free": 1,
+        "extra-rules/no-for-loops": 1
+    }
+}
