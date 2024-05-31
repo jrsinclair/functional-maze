@@ -24,5 +24,8 @@ const renderedMaze = renderMazeText(30, mazeLines);
 document.querySelector('#maze').innerHTML = '&lt;pre>' + renderedMaze + '&lt;/pre>';
 </code></pre>
     <h2>Interesting features</h2>
+    <p>The <code>maze()</code> function takes a <code>seed</code> value as its second argument.
+       Providing a seed makes maze generation deterministic. That is, if you give it the same size
+       and seed, you will always get the same maze.</p>
   </div>
 `;
