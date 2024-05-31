@@ -8,6 +8,7 @@ This is a simple tool to create a square maze. It’s not especially fast or mem
 
 Here is a sample maze, rendered using the unicode text renderer:
 
+```
 ╶─┬┬┬─┬┬┬┬┬┬┬┬┬┬─┬─┐
 ╷┌┤╵├╴╵╵│││╵╵│╵│┌┤┌┤
 │╵└╴├┐┌─┤││┌─┼┐╵││╵│
@@ -28,6 +29,7 @@ Here is a sample maze, rendered using the unicode text renderer:
 ├╴╷│││╷╷├╴╶┤│╷│╶┘╶─┤
 ├╴└┤└┤││└┐╷│├┘│╷╶┐╷╵
 └──┴─┴┴┴─┴┴┴┴─┴┴─┴┴╴
+```
 
 ## Example usage
 
