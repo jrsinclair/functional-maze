@@ -7,6 +7,6 @@ export function randomInt(seed: number) {
 }
 
 export function randomInRange(seed: number, maxInt: number) {
-    const rand = randomInt(seed);
+    const rand = Math.abs(randomInt(seed));
     return [rand, Math.floor((rand / M) * maxInt)];
 }

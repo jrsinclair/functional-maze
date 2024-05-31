@@ -64,6 +64,9 @@ function buildMaze(
         return buildMaze(lines, branchPoints.delete(bpIdx), unconnected, nextSeed01);
     }
     const [nextSeed02, candidateIdx] = randomInRange(nextSeed01, candidates.length);
+    if (!candidates[candidateIdx]) {
+        console.log(`Index ${candidateIdx} of`, candidates, 'does not exist');
+    }
     const newLines = lines.add(line(branchPoint, candidates[candidateIdx]));
     const newBranchPoints =
         candidates.length == 1

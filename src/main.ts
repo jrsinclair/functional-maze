@@ -1,25 +1,28 @@
 import './style.css';
-import typescriptLogo from './typescript.svg';
-import viteLogo from '/vite.svg';
 
 import { maze, renderMazeText } from '../lib/main';
 
 const seed = Date.now();
-const n = 40;
+const n = 20;
 const mazeLines = maze(n, seed);
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-    <h2>Maze renderer 3</h2>
-    <pre>${renderMazeText(n, mazeLines)}</pre>
+    <h1>Simple Maze Tool</h1>
+    <h2>What is this?</h2>
+    <p>This is a simple tool to create a square maze. It’s not especially fast or memory efficient.
+       It’s intented mostly as a learning tool. But it does have some interesting features,
+       discussed below.</p>
+    <h2>Example Mazes</h2>
+    <p>Here is a sample maze, rendered using the unicode text renderer:</p>
+    <pre class="TextMaze">${renderMazeText(n, mazeLines)}</pre>
+    <h2>Example usage</h2>
+    <p>To generate a maze, we call the <code>maze()</code> function.</p>
+    <pre><code>import {maze, renderMazeText} from '@jrsinclair/maze';
+const mazeLines = maze(30);
+const renderedMaze = renderMazeText(30, mazeLines);
+document.querySelector('#maze').innerHTML = '&lt;pre>' + renderedMaze + '&lt;/pre>';
+</code></pre>
+    <h2>Interesting features</h2>
   </div>
 `;
