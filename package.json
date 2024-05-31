@@ -1,13 +1,13 @@
 {
-  "name": "functional-maze",
-  "private": true,
+  "name": "@jrsinclair/functional-maze",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest --no-isolate"
+    "test": "vitest --no-isolate",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@fast-check/vitest": "^0.1.1",
@@ -19,5 +19,21 @@
   "dependencies": {
     "immutable": "^4.3.6"
   },
-  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72",
+  "description": "A simple tool to create a square maze",
+  "main": "dist/simple-maze-generator.js",
+  "types": "dist/main.d.ts",
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "directories": {
+    "lib": "lib"
+  },
+  "keywords": [
+    "maze"
+  ],
+  "author": "James Sinclair <jrsinclair@gmail.com>",
+  "license": "ISC",
+  "repository": "https://github.com/jrsinclair/functional-maze"
 }
