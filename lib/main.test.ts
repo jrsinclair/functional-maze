@@ -1,9 +1,10 @@
 import { describe, expect } from 'vitest';
 import { it, fc } from '@fast-check/vitest';
+import { Set } from 'immutable';
 import { type Point, p } from './point';
 import { type Line } from './line';
 import { maze } from './main';
-import { Set } from 'immutable';
+import { randomInRange } from './util';
 
 function connectedPoints(lines: Set<Line>, graphA = Set<Point>(), graphB = Set<Point>()) {
     if (lines.size === 0) return [graphA, graphB] as const;
@@ -49,6 +50,18 @@ describe('maze()', () => {
             lines.forEach(({ a, b }) => {
                 expect(Math.sqrt((b.y - a.y) ** 2 + (b.x - a.x) ** 2)).toBe(1);
             });
+        },
+    );
+});
+
+describe('randomInRange()', () => {
+    it.prop([fc.integer(), fc.integer({ min: 1, max: 2 ** 31 })])(
+        'should always produce an integer between 0 and n - 1',
+        (seed, n) => {
+            const [, actual] = randomInRange(seed, n);
+            expect(Number.isInteger(n)).toBe(true);
+            expect(actual).toBeLessThanOrEqual(n - 1);
+            expect(actual).toBeGreaterThanOrEqual(0);
         },
     );
 });
