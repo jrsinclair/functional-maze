@@ -17,10 +17,11 @@ export type { Line };
 
 const allLines = new Map<string, Line>();
 
-export const line = (a: Point, b: Point) => {
-    const str = a.lte(b) ? `${a}-${b}` : `${b}-${a}`;
+export const line = (a: Point, b: Point): Line => {
+    if (!a.lte(b)) return line(b, a);
+    const str = `${a}-${b}`;
     if (allLines.has(str)) return allLines.get(str)!;
-    const newLine = a.lte(b) ? new Line(a, b) : new Line(b, a);
+    const newLine = new Line(a, b);
     Object.freeze(newLine);
     allLines.set(str, newLine);
     return newLine;

@@ -1,13 +1,14 @@
 import './style.css';
 
-import { maze, renderMazeText, mazeImproved, renderMazeSVG } from '../lib/main';
+import { maze, renderMazeText, mazeImproved, renderMazeSVG, graphToWalls } from '../lib/main';
 import { range } from '../lib/util';
+import { p } from '../lib/point';
 
 // const seed = Date.now();
 const seed = 1720301682563;
-const n = 20;
+const n = 50;
 // const mazeLines = maze(n, seed);
-const improvedMazeLines = mazeImproved(seed, n - 1);
+const improvedMazeLines = graphToWalls(n, mazeImproved(seed, n - 1));
 
 const WALL_SIZE = 25;
 const innerWalls = range(n - 1)
@@ -28,6 +29,7 @@ const innerWalls = range(n - 1)
     )
     .join('');
 console.log(innerWalls);
+console.log(p(3,5));
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <h1>Simple Maze Tool</h1>
@@ -39,7 +41,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <p>Here is a maze using the improved algorithm, renedered using the unicode text renderer:</p>
     <pre class="TextMaze">${renderMazeText(n, improvedMazeLines)}</pre>
     <p>Here is one more maze, rendered using the SVG renderer:</p>
-    <div>${renderMazeSVG(n, WALL_SIZE, improvedMazeLines)}</div>
+    <div>${renderMazeSVG(n-1, WALL_SIZE, improvedMazeLines)}</div>
     <p>The seed for these mazes was ${seed}</p>
     <h2>Example usage</h2>
     <p>To generate a maze, we call the <code>maze()</code> function.</p>

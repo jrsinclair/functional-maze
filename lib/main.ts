@@ -107,17 +107,17 @@ export function maze(n: number, seed = Date.now()) {
  *
  * @param {number} seed A random number seed.
  * @param {number} n The size of the maze to build.
- * @returns {[Set<Point>, Set<Line>, Point, number]} An empty set of
+ * @returns {[Set<Point>, List<Line>, Point, number]} An empty set of
  *     lines, and a grid of points.
  */
-function buildInitialState(seed: number, n: number): [Set<Point>, Set<Line>, Point, number] {
+function buildInitialState(seed: number, n: number): [Set<Point>, List<Line>, Point, number] {
     // Build the grid by flat-mapping a range over
     // a range.
     const rooms = range(n).flatMap((y) => range(n).map((x) => p(x, y)));
 
     // Create the empty set of lines to represent
     // connected rooms.
-    const connectedRooms = Set<Line>();
+    const connectedRooms = List<Line>();
 
     // Pick a random room in the grid to be our
     // starting point.
@@ -133,12 +133,12 @@ function buildInitialState(seed: number, n: number): [Set<Point>, Set<Line>, Poi
  *
  * @param {Set<Point>} uconnectedRooms Rooms in the
  *     grid that we haven't connected yet.
- * @param {Set<Line>} connectedRooms Rooms that we've
+ * @param {List<Line>} connectedRooms Rooms that we've
  *     connected to the maze.
  * @param {Point} currentRoom The room we're going to
  *     branch from.
  * @param {number} seed A random number seed.
- * @returns {[Set<Point>, Set<Line>, number]} Returns
+ * @returns {[Set<Point>, List<Line>, number]} Returns
  *     a tuple containing:
  *     - A new set of unconnected rooms.
  *     - A new set of connected rooms.
@@ -146,10 +146,10 @@ function buildInitialState(seed: number, n: number): [Set<Point>, Set<Line>, Poi
  */
 function buildMazeImproved(
     unconnectedRooms: Set<Point>,
-    connectedRooms: Set<Line>,
+    connectedRooms: List<Line>,
     currentRoom: Point,
     seed: number,
-): [Set<Point>, Set<Line>, number] {
+): [Set<Point>, List<Line>, number] {
     // Check to see how many rooms remain unconnected.
     // If there are no more unconnected rooms,
     // we've finished.
@@ -170,7 +170,7 @@ function buildMazeImproved(
     // Pick one of the unconnected adjacent rooms at
     // random and connect it with this room.
     const [nextSeed1, idx] = randomInRange(seed, candidates.length);
-    const updatedMaze = connectedRooms.add(line(currentRoom, candidates[idx]));
+    const updatedMaze = connectedRooms.push(line(currentRoom, candidates[idx]));
     const updatedUnconnected = unconnectedRooms.remove(currentRoom);
 
     // Move to the newly connected room.
@@ -187,7 +187,7 @@ function buildMazeImproved(
     return buildMazeImproved(nextUnconnected, nextMaze, currentRoom, nextSeed2);
 }
 
-function graphToWalls(n: number, graph: Set<Line>) {
+export function graphToWalls(n: number, graph: List<Line>): List<Line> {
     const northWall = range(n).map((x) => line(p(x, 0), p(x + 1, 0)));
     const westWall = range(n).map((y) => line(p(0, y), p(0, y + 1)));
     const southWall = range(n).map((x) => line(p(x, n), p(x + 1, n)));
@@ -204,7 +204,7 @@ function graphToWalls(n: number, graph: Set<Line>) {
     return graph.reduce(
         (walls, ab) => walls.remove(line(ab.b, p(ab.a.x + 1, ab.a.y + 1))),
         allPossibleWalls,
-    );
+    ).toList();
 }
 
 /**
@@ -221,21 +221,21 @@ function graphToWalls(n: number, graph: Set<Line>) {
  * @returns {Set<Line>} A set of connected rooms,
  *   represented as lines.
  */
-export function mazeImproved(seed: number, n: number): Set<Line> {
+export function mazeImproved(seed: number, n: number): List<Line> {
     // Set up the initial state.
     const [grid, emptySet, startPoint, newSeed] = buildInitialState(seed, n);
 
     // Run the recursive algorithm.
     const [_, finalMaze] = buildMazeImproved(grid, emptySet, startPoint, newSeed);
 
-    return graphToWalls(n, finalMaze);
+    return finalMaze;
 }
 
 //
 // Rendering functions
 // ------------------------------------------------------------------------------------------------
 
-export function renderMazeAscii(n: number, lines: Set<Line>): string {
+export function renderMazeAscii(n: number, lines: List<Line>): string {
     const mutableArray = new Array(n * 2).fill(undefined).map((_) => new Array(n * 2).fill(' '));
     return lines
         .reduce((arr, { a, b }) => {
@@ -268,7 +268,7 @@ const RENDER_MAP = {
     '': '.',
 } as const;
 
-const xyToChar = (x: number, y: number, lines: Set<Line>) => {
+const xyToChar = (x: number, y: number, lines: List<Line>) => {
     const pt = p(x, y);
     const idx = [
         ['N' as const, NORTH] as const,
@@ -277,21 +277,21 @@ const xyToChar = (x: number, y: number, lines: Set<Line>) => {
         ['W' as const, WEST] as const,
     ]
         .map(([c, dir]) => [c, line(pt, addPoint(pt)(dir))] as const)
-        .filter(([, line]) => lines.has(line))
+        .filter(([, line]) => lines.includes(line))
         .map(([c]) => c)
         .join('') as keyof typeof RENDER_MAP;
     return RENDER_MAP[idx];
 };
 
-export function renderMazeText(n: number, lines: Set<Line>): string {
+export function renderMazeText(n: number, lines: List<Line> | Set<Line>): string {
     return new Array(n)
         .fill(undefined)
         .map(() => new Array(n).fill(' '))
-        .map((row, y) => row.map((_, x) => xyToChar(x, y, lines)).join(''))
+        .map((row, y) => row.map((_, x) => xyToChar(x, y, lines.toList())).join(''))
         .join('\n');
 }
 
-export function renderMazeSVG(n: number, squareSize: number, lines: Set<Line>): string {
+export function renderMazeSVG(n: number, squareSize: number, lines: List<Line>): string {
     const diagSize = (n + 1) * squareSize;
     const paths = lines
         .map(({ a, b }) => {

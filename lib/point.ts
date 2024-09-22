@@ -34,3 +34,5 @@ export const SOUTH = p(0, 1);
 export const WEST = p(-1, 0);
 
 export const addPoint = (a: Point) => (b: Point) => p(a.x + b.x, a.y + b.y);
+
+export const subtractPoint = (a: Point) => (b: Point) => p(a.x - b.x, a.y - b.y);
