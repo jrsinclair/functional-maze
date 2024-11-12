@@ -1,4 +1,4 @@
-import { Set, List, Map, Collection } from 'immutable';
+import { Set, List, Map } from 'immutable';
 import { type Line, line } from './line';
 import { type Point, p, EAST, NORTH, SOUTH, WEST, addPoint, subtractPoint } from './point';
 
