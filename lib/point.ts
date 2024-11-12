@@ -1,18 +1,18 @@
 class Point {
-    readonly x: number;
-    readonly y: number;
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-    }
+  readonly x: number;
+  readonly y: number;
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
 
-    lte(b: Point) {
-        return this.y < b.y || (this.y == b.y && this.x <= b.x);
-    }
+  lte(b: Point) {
+    return this.y < b.y || (this.y == b.y && this.x <= b.x);
+  }
 
-    toString() {
-        return `${this.x},${this.y}`;
-    }
+  toString() {
+    return `${this.x},${this.y}`;
+  }
 }
 
 export type { Point };
@@ -20,12 +20,12 @@ export type { Point };
 const allPoints = new Map<string, Point>();
 
 export const p = (x: number, y: number) => {
-    const str = `${x}-${y}`;
-    if (allPoints.has(str)) return allPoints.get(str)!;
-    const newPoint = new Point(x, y);
-    Object.freeze(newPoint);
-    allPoints.set(str, newPoint);
-    return newPoint;
+  const str = `${x}-${y}`;
+  if (allPoints.has(str)) return allPoints.get(str)!;
+  const newPoint = new Point(x, y);
+  Object.freeze(newPoint);
+  allPoints.set(str, newPoint);
+  return newPoint;
 };
 
 export const NORTH = p(0, -1);

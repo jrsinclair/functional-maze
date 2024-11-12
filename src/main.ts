@@ -1,35 +1,19 @@
 import './style.css';
 
-import { maze, renderMazeText, mazeImproved, renderMazeSVG, graphToWalls } from '../lib/main';
-import { range } from '../lib/util';
-import { p } from '../lib/point';
+import { maze, renderMazeText } from '../lib/main';
+import { graphToWalls, roomsToList, renderMazeSVG } from '../lib/render';
 
 // const seed = Date.now();
 const seed = 1720301682563;
-const n = 50;
-// const mazeLines = maze(n, seed);
-const improvedMazeLines = graphToWalls(n, mazeImproved(seed, n - 1));
+const n = 16;
+
+const mazeRooms = maze(n, seed);
+const mazeLines = graphToWalls(mazeRooms);
 
 const WALL_SIZE = 25;
-const innerWalls = range(n - 1)
-    .map((y) =>
-        range(n - 1)
-            .map((x) => {
-                const pointX = (x + 1) * WALL_SIZE;
-                const pointY = (y + 1) * WALL_SIZE;
-                return `
-    <path class="wall" id="east-wall-${x}-${y}" d="M ${pointX + WALL_SIZE} ${pointY} L ${
-                    pointX + WALL_SIZE
-                } ${pointY + WALL_SIZE}" />
-    <path class="wall" id="south-wall-${x}-${y}" d="M ${pointX} ${pointY + WALL_SIZE} L ${
-                    pointX + WALL_SIZE
-                } ${pointY + WALL_SIZE}" />`;
-            })
-            .join(''),
-    )
-    .join('');
-console.log(innerWalls);
-console.log(p(3,5));
+
+const mazeAsList = roomsToList(mazeRooms);
+
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <h1>Simple Maze Tool</h1>
@@ -39,10 +23,13 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
        discussed below.</p>
     <h2>Example Mazes</h2>
     <p>Here is a maze using the improved algorithm, renedered using the unicode text renderer:</p>
-    <pre class="TextMaze">${renderMazeText(n, improvedMazeLines)}</pre>
+    <pre class="TextMaze">${renderMazeText(n + 1, mazeLines)}</pre>
     <p>Here is one more maze, rendered using the SVG renderer:</p>
-    <div>${renderMazeSVG(n-1, WALL_SIZE, improvedMazeLines)}</div>
+    <div>${renderMazeSVG(n, WALL_SIZE, mazeRooms)}</div>
     <p>The seed for these mazes was ${seed}</p>
+    <h2>Accessible rendering</h2>
+    <div class="accessibleMaze">${mazeAsList}</div>
+    <p><small>Sprites by <a href="http://www.indiedb.com/games/instant-dungeon">Scott Matott</a> used under the Open Game Art license (OGA-BY-3.0).</small></p>
     <h2>Example usage</h2>
     <p>To generate a maze, we call the <code>maze()</code> function.</p>
     <pre><code>import {maze, renderMazeText} from '@jrsinclair/maze';
