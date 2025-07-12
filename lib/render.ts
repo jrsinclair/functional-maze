@@ -54,6 +54,69 @@ export function graphToWalls(graph: Map<Point, List<Point>>): List<Line> {
   return List(walls);
 }
 
+// ASCII text renderer
+// ------------------------------------------------------------------------------------------------
+
+export function renderMazeAscii(n: number, lines: List<Line>): string {
+  const mutableArray = new Array(n * 2).fill(undefined).map((_) => new Array(n * 2).fill(' '));
+  return lines
+    .reduce((arr, { a, b }) => {
+      arr[a.y * 2][a.x * 2] = '+';
+      arr[b.y * 2][b.x * 2] = '+';
+      if (b.x > a.x) arr[a.y * 2][a.x * 2 + 1] = '-';
+      if (b.y > a.y) arr[a.y * 2 + 1][a.x * 2] = '|';
+      return arr;
+    }, mutableArray)
+    .map((row) => row.join(''))
+    .join('\n');
+}
+
+// Unicode text renderer
+// ------------------------------------------------------------------------------------------------
+
+const RENDER_MAP = {
+  NESW: '┼',
+  NES: '├',
+  NEW: '┴',
+  NSW: '┤',
+  ESW: '┬',
+  NE: '└',
+  NS: '│',
+  NW: '┘',
+  ES: '┌',
+  EW: '─',
+  SW: '┐',
+  N: '╵',
+  E: '╶',
+  S: '╷',
+  W: '╴',
+  '': '.',
+} as const;
+
+const NESW = [
+  ['N' as const, NORTH] as const,
+  ['E' as const, EAST] as const,
+  ['S' as const, SOUTH] as const,
+  ['W' as const, WEST] as const,
+];
+
+const xyToChar = (x: number, y: number, lines: List<Line>) => {
+  const pt = p(x, y);
+  const idx = NESW.map(([c, dir]) => [c, line(pt, addPoint(pt)(dir))] as const)
+    .filter(([, line]) => lines.includes(line))
+    .map(([c]) => c)
+    .join('') as keyof typeof RENDER_MAP;
+  return RENDER_MAP[idx];
+};
+
+export function renderMazeText(n: number, lines: List<Line> | Set<Line>): string {
+  return new Array(n)
+    .fill(undefined)
+    .map(() => new Array(n).fill(' '))
+    .map((row, y) => row.map((_, x) => xyToChar(x, y, lines.toList())).join(''))
+    .join('\n');
+}
+
 // Accessible renderer.
 // ------------------------------------------------------------------------------------------------
 
