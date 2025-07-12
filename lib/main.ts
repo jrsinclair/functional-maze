@@ -2,7 +2,13 @@ import { List, Map } from 'immutable';
 import { p, type Point, addPoint, NORTH, SOUTH, EAST, WEST } from './point';
 import { randomInRange } from './util';
 
-export { renderMazeText, renderMazeAscii, renderMazeSVG } from './render';
+export {
+  renderMazeText,
+  renderMazeAscii,
+  renderMazeSVG,
+  graphToWalls,
+  roomsToList,
+} from './render';
 
 //
 // Maze building functions

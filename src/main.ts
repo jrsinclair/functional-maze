@@ -1,7 +1,6 @@
 import './style.css';
 
-import { maze } from '../lib/main';
-import { graphToWalls, renderMazeSVG, renderMazeText, roomsToList } from '../lib/render';
+import { maze, graphToWalls, renderMazeSVG, renderMazeText, roomsToList } from '../lib/main';
 
 // const seed = Date.now();
 const seed = 1720301682563;
