@@ -2,9 +2,6 @@ import { Set, List, Map } from 'immutable';
 import { type Line, line } from './line';
 import { type Point, p, EAST, NORTH, SOUTH, WEST, addPoint, subtractPoint } from './point';
 
-type Room = { doors: Array<Point> };
-type Rooms = Room[][];
-
 const DIRECTIONS = [NORTH, EAST, SOUTH, WEST];
 
 const directionToString = Map([
@@ -13,20 +10,6 @@ const directionToString = Map([
   [SOUTH, 'south'],
   [WEST, 'west'],
 ]);
-
-export function connectionsToRooms(connections: Set<Line>): Rooms {
-  const roughSize = Math.sqrt(connections.size + 1);
-  const rooms: Rooms = new Array(roughSize).fill(undefined).map(() => new Array(roughSize));
-  connections.forEach(({ a, b }) => {
-    if (!rooms[a.y][a.x]) rooms[a.y][a.x] = { doors: [] };
-    if (!rooms[b.y][b.x]) rooms[b.y][b.x] = { doors: [] };
-    const directionA = subtractPoint(b)(a);
-    const directionB = subtractPoint(a)(b);
-    rooms[a.y][a.x].doors.push(directionA);
-    rooms[b.y][b.x].doors.push(directionB);
-  });
-  return rooms;
-}
 
 const roomWall = (room: Point) => (direction: Point) => {
   switch (direction) {
@@ -110,10 +93,11 @@ const xyToChar = (x: number, y: number, lines: List<Line>) => {
 };
 
 export function renderMazeText(n: number, lines: List<Line> | Set<Line>): string {
+  const linesAsList = lines.toList();
   return new Array(n)
     .fill(undefined)
     .map(() => new Array(n).fill(' '))
-    .map((row, y) => row.map((_, x) => xyToChar(x, y, lines.toList())).join(''))
+    .map((row, y) => row.map((_, x) => xyToChar(x, y, linesAsList)).join(''))
     .join('\n');
 }
 
