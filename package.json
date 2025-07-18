@@ -17,7 +17,7 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
-    "immutable": "^4.3.6"
+    "immutable": "^5.1.3"
   },
   "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72",
   "description": "A simple tool to create a square maze",

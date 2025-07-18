@@ -2,13 +2,7 @@ import { List, Map } from 'immutable';
 import { p, type Point, addPoint, NORTH, SOUTH, EAST, WEST } from './point';
 import { randomInRange } from './util';
 
-export {
-  renderMazeText,
-  renderMazeAscii,
-  renderMazeSVG,
-  graphToWalls,
-  roomsToList,
-} from './render';
+export { renderMazeText, renderMazeAscii, renderMazeSVG, roomsToList } from './render';
 
 //
 // Maze building functions
@@ -54,6 +48,16 @@ function buildMaze(room: Point, mazeSoFar: Map<Point, List<Point>>, seed0: numbe
   return buildMaze(room, newMaze, seed2);
 }
 
+/**
+ * Maze.
+ *
+ * Builds a maze graph.
+ *
+ * @param n The size of the maze. Mazes are always a square.
+ * @param seed0 An integer seed used for random number generation. If omitted, the current timestamp
+ *   will be used.
+ * @returns A map of rooms (Points) to adjacent rooms (a List of Points).
+ */
 export function maze(n: number, seed0 = Date.now()) {
   const [room, mazeGrid, seed1] = buildInitialState(n, seed0);
   const [mz] = buildMaze(room, mazeGrid, seed1);

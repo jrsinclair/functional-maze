@@ -3,7 +3,7 @@ export const A = 1103515245;
 export const C = 12345;
 
 export function randomInt(seed: number) {
-    return (A * seed + C) % M;
+  return (A * seed + C) % M;
 }
 
 /**
@@ -19,30 +19,34 @@ export function randomInt(seed: number) {
  *     specified range.
  */
 export function randomInRange(seed: number, n: number): [number, number] {
-    const nextSeed = Math.abs(randomInt(seed));
-    if (n <= 1) return [nextSeed, 0];
-    return [nextSeed, Math.floor((nextSeed / M) * n)];
+  const nextSeed = Math.abs(randomInt(seed));
+  if (n <= 1) return [nextSeed, 0];
+  return [nextSeed, Math.floor((nextSeed / M) * n)];
 }
 
 export function range(n: number) {
-    return new Array(n).fill(undefined).map((_, i) => i);
+  return new Array(n).fill(undefined).map((_, i) => i);
 }
 
 export function shuffle<T>(startSeed: number, initialArray: ReadonlyArray<T>): [number, T[]] {
-    const array = initialArray.slice(0);
-    let currentIndex = array.length;
-    let seed = startSeed;
+  const array = initialArray.slice(0);
+  let currentIndex = array.length;
+  let seed = startSeed;
 
-    // While there remain elements to shuffle...
-    while (currentIndex != 0) {
-        // Pick a remaining element...
-        let [nextSeed, randomIndex] = randomInRange(seed, currentIndex);
-        seed = nextSeed;
-        currentIndex--;
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+    // Pick a remaining element...
+    let [nextSeed, randomIndex] = randomInRange(seed, currentIndex);
+    seed = nextSeed;
+    currentIndex--;
 
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-    }
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+  }
 
-    return [seed, array];
+  return [seed, array];
+}
+
+export function repeat<T>(value: T, n: number) {
+  return new Array(n).fill(value);
 }

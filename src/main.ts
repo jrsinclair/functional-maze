@@ -1,13 +1,12 @@
 import './style.css';
 
-import { maze, graphToWalls, renderMazeSVG, renderMazeText, roomsToList } from '../lib/main';
+import { maze, renderMazeSVG, renderMazeText, roomsToList } from '../lib/main';
 
 // const seed = Date.now();
 const seed = 1720301682563;
 const n = 16;
 
 const mazeRooms = maze(n, seed);
-const mazeLines = graphToWalls(mazeRooms);
 
 const WALL_SIZE = 25;
 
@@ -22,9 +21,9 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
        discussed below.</p>
     <h2>Example Mazes</h2>
     <p>Here is a maze using the improved algorithm, renedered using the unicode text renderer:</p>
-    <pre class="TextMaze">${renderMazeText(n + 1, mazeLines)}</pre>
-    <p>Here is one more maze, rendered using the SVG renderer:</p>
-    <div>${renderMazeSVG(n, WALL_SIZE, mazeRooms)}</div>
+    <pre class="TextMaze">${renderMazeText(n, mazeRooms)}</pre>
+    <p>Here is the same maze, rendered using the SVG renderer:</p>
+    <figure class="SVGMaze">${renderMazeSVG(n, WALL_SIZE, mazeRooms)}</figure>
     <p>The seed for these mazes was ${seed}</p>
     <h2>Accessible rendering</h2>
     <div class="accessibleMaze">${mazeAsList}</div>
@@ -32,8 +31,8 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h2>Example usage</h2>
     <p>To generate a maze, we call the <code>maze()</code> function.</p>
     <pre><code>import {maze, renderMazeText} from '@jrsinclair/maze';
-const mazeLines = maze(30);
-const renderedMaze = renderMazeText(30, mazeLines);
+const mazeRooms = maze(30);
+const renderedMaze = renderMazeText(30, mazeRooms);
 document.querySelector('#maze').innerHTML = '&lt;pre>' + renderedMaze + '&lt;/pre>';
 </code></pre>
     <h2>Interesting features</h2>

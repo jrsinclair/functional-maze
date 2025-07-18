@@ -28,6 +28,10 @@ pre {
   transform: scaleX(2);
 }
 
+.SVGMaze {
+  text-align: center;
+}
+
 a {
   font-weight: 500;
   color: #646cff;

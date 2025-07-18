@@ -1,15 +1,20 @@
-import { Set, List, Map } from 'immutable';
+import { List, Map } from 'immutable';
 import { type Line, line } from './line';
 import { type Point, p, EAST, NORTH, SOUTH, WEST, addPoint, subtractPoint } from './point';
+import { emptyVertex } from './vertex';
+import { repeat } from './util';
 
-const DIRECTIONS = [NORTH, EAST, SOUTH, WEST];
-
-const directionToString = Map([
+const directionToString = Map<Point, string>([
   [NORTH, 'north'],
   [EAST, 'east'],
   [SOUTH, 'south'],
   [WEST, 'west'],
 ]);
+
+const DIRECTIONS = [NORTH, EAST, SOUTH, WEST] as const;
+
+// ASCII text renderer
+// ------------------------------------------------------------------------------------------------
 
 const roomWall = (room: Point) => (direction: Point) => {
   switch (direction) {
@@ -26,6 +31,7 @@ const roomWall = (room: Point) => (direction: Point) => {
   }
 };
 
+// Exported for testing. Used with legacy unicode renderer as well as ascii renderer.
 export function graphToWalls(graph: Map<Point, List<Point>>): List<Line> {
   const walls: Line[] = [];
   graph.forEach((doors, room) => {
@@ -37,9 +43,13 @@ export function graphToWalls(graph: Map<Point, List<Point>>): List<Line> {
   return List(walls);
 }
 
-// ASCII text renderer
-// ------------------------------------------------------------------------------------------------
-
+/**
+ *
+ * @param n The size of the maze. The maze is always a square and n represents the number of rooms
+ *   along one side of the square.
+ * @param lines
+ * @returns
+ */
 export function renderMazeAscii(n: number, lines: List<Line>): string {
   const mutableArray = new Array(n * 2).fill(undefined).map((_) => new Array(n * 2).fill(' '));
   return lines
@@ -57,48 +67,43 @@ export function renderMazeAscii(n: number, lines: List<Line>): string {
 // Unicode text renderer
 // ------------------------------------------------------------------------------------------------
 
-const RENDER_MAP = {
-  NESW: '┼',
-  NES: '├',
-  NEW: '┴',
-  NSW: '┤',
-  ESW: '┬',
-  NE: '└',
-  NS: '│',
-  NW: '┘',
-  ES: '┌',
-  EW: '─',
-  SW: '┐',
-  N: '╵',
-  E: '╶',
-  S: '╷',
-  W: '╴',
-  '': '.',
-} as const;
+/**
+ * Render Maze Text.
+ *
+ * Renders the maze using unicode box drawing characters.
+ *
+ * @param n The size of the maze. The maze is always a square and n represents the number of rooms
+ *   along one side of the square.
+ * @param rooms A graph representation of the maze, as a map of rooms (x,y coordinates) to adjacent
+ *   rooms (a list of x,y coordinates).
+ * @returns A unicode representation of the maze.
+ */
+export function renderMazeText(n: number, rooms: Map<Point, List<Point>>): string {
+  // Construct a 2D array with n + 1 rows and n + 1 columns.
+  const emptyVertices = repeat(undefined, n + 1).map(() => repeat(emptyVertex, n + 1));
+  const vertices = emptyVertices.map((row, y) =>
+    row.map((vertex, x) => {
+      // We are looking at the vertex at x,y. There are potentially rooms to the NW, NE, SE, and SW.
+      const nwRoom = p(x - 1, y - 1);
+      const neRoom = p(x, y - 1);
+      const seRoom = p(x, y);
+      const swRoom = p(x - 1, y);
 
-const NESW = [
-  ['N' as const, NORTH] as const,
-  ['E' as const, EAST] as const,
-  ['S' as const, SOUTH] as const,
-  ['W' as const, WEST] as const,
-];
-
-const xyToChar = (x: number, y: number, lines: List<Line>) => {
-  const pt = p(x, y);
-  const idx = NESW.map(([c, dir]) => [c, line(pt, addPoint(pt)(dir))] as const)
-    .filter(([, line]) => lines.includes(line))
-    .map(([c]) => c)
-    .join('') as keyof typeof RENDER_MAP;
-  return RENDER_MAP[idx];
-};
-
-export function renderMazeText(n: number, lines: List<Line> | Set<Line>): string {
-  const linesAsList = lines.toList();
-  return new Array(n)
-    .fill(undefined)
-    .map(() => new Array(n).fill(' '))
-    .map((row, y) => row.map((_, x) => xyToChar(x, y, linesAsList)).join(''))
-    .join('\n');
+      return (
+        [
+          [nwRoom, neRoom, NORTH], // If connection from the NW to NE room, add a north half-wall.
+          [neRoom, seRoom, EAST], //  If connection from the NE to SE room, add an east half-wall.
+          [seRoom, swRoom, SOUTH], // If connection from the SE to SW room, add a south half-wall.
+          [swRoom, nwRoom, WEST], //  If connection from the SW to NW room, add a west half-wall.
+        ] as const
+      ).reduce((v, [a, b, dir]) => {
+        // If at least one of the rooms is inside the maze and there is no connection between
+        // them, add a half-wall.
+        return (rooms.has(a) || rooms.has(b)) && !rooms.get(a)?.includes(b) ? v.add(dir) : v;
+      }, vertex);
+    }),
+  );
+  return vertices.map((row) => row.join('')).join('\n');
 }
 
 // Accessible renderer.
@@ -110,7 +115,7 @@ const doorsToList = (doors: List<Point>, room: Point) => {
     doors
       .map((door) => {
         const direction = directionToString.get(subtractPoint(door)(room));
-        return `<li class="door door-${direction}" ><a class="doorLink" href="#room-${door.x}-${door.y}" title="Take the ${direction} door">${direction}</a></li>`;
+        return `<li class="door door-${direction}"><a class="doorLink" href="#room-${door.x}-${door.y}" title="Take the ${direction} door">${direction}</a></li>`;
       })
       .join('\n') +
     '</ul>'
@@ -125,7 +130,16 @@ const doorsDescription = (doors: List<Point>, room: Point) => {
   return dirs.set(-1, (doors.size > 1 ? 'and ' : '') + dirs.get(-1)).join(', ');
 };
 
-export const roomsToList = (rooms: Map<Point, List<Point>>) => {
+/**
+ * Rooms to List.
+ *
+ * Takes a maze graph representation and renders it as an HTML list.
+ *
+ * @param rooms  graph representation of the maze. That is, a map of rooms (Point objects) to
+ *   adjacent rooms (a List of Point objects).
+ * @returns An HTML string that represents the maze as an unordered list.
+ */
+export function roomsToList(rooms: Map<Point, List<Point>>) {
   return (
     '<ul class="room-list">' +
     rooms
@@ -134,21 +148,29 @@ export const roomsToList = (rooms: Map<Point, List<Point>>) => {
         (doors, room) =>
           `<li tabindex="0" class="maze-room" id="room-${room.x}-${room.y}">
           <p>Room ${room.x},${room.y}</p>
-          <p>${doors.size === 1 ? 'There is a door' : 'There are doors'} to the ${doorsDescription(
-            doors,
-            room,
-          )}.</p>
+          <p>${doors.size === 1 ? 'There is a door' : 'There are doors'} to the
+          ${doorsDescription(doors, room)}.</p>
           ${doorsToList(doors, room)}
          </li>`,
       )
       .join('\n') +
     '</ul>'
   );
-};
+}
 
 // SVG Renderer
 // ------------------------------------------------------------------------------------------------
 
+/**
+ * Render maze as SVG.
+ *
+ * @param n The size of the maze. The maze is always a square and n represents the number of rooms
+ *   along one side of the square.
+ * @param squareSize The size in pixels to draw each room.
+ * @param rooms A graph representation of the maze. That is, a map of rooms (Point objects) to
+ *   adjacent rooms (a List of Point objects).
+ * @returns A string that will draw an SVG representation of the maze if converted to DOM elements.
+ */
 export function renderMazeSVG(n: number, squareSize: number, rooms: Map<Point, List<Point>>) {
   const diagSize = (n + 2) * squareSize;
   const wStart = squareSize;

@@ -28,10 +28,15 @@ export const p = (x: number, y: number) => {
   return newPoint;
 };
 
-export const NORTH = p(0, -1);
-export const EAST = p(1, 0);
-export const SOUTH = p(0, 1);
-export const WEST = p(-1, 0);
+export type NORTH = Point & { x: 0; y: -1 };
+export type EAST = Point & { x: 1; y: 0 };
+export type SOUTH = Point & { x: 0; y: 1 };
+export type WEST = Point & { x: -1; y: 0 };
+
+export const NORTH: NORTH = p(0, -1) as NORTH;
+export const EAST: EAST = p(1, 0) as EAST;
+export const SOUTH: SOUTH = p(0, 1) as SOUTH;
+export const WEST: WEST = p(-1, 0) as WEST;
 
 export const addPoint = (a: Point) => (b: Point) => p(a.x + b.x, a.y + b.y);
 

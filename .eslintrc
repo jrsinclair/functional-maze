@@ -40,6 +40,7 @@
         "indent": [2, 4],
         "consistent-return": 0,
         "no-undef": 2,
+        "sort-imports": "error",
 
         "extra-rules/potential-point-free": 1,
         "extra-rules/no-for-loops": 1
