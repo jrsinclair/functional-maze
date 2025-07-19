@@ -1,5 +1,5 @@
+import { fc, it } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
-import { it, fc } from '@fast-check/vitest';
 import { maze } from './main';
 import { randomInRange } from './util';
 

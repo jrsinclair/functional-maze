@@ -1,5 +1,5 @@
 import { Set } from 'immutable';
-import { NORTH, EAST, SOUTH, WEST } from './point';
+import { EAST, NORTH, SOUTH, WEST } from './point';
 
 const dirsOrder = [NORTH, EAST, SOUTH, WEST] as const;
 

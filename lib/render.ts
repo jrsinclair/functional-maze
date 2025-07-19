@@ -1,8 +1,8 @@
 import { List, Map } from 'immutable';
 import { type Line, line } from './line';
-import { type Point, p, EAST, NORTH, SOUTH, WEST, addPoint, subtractPoint } from './point';
-import { emptyVertex } from './vertex';
+import { EAST, NORTH, type Point, SOUTH, WEST, addPoint, p, subtractPoint } from './point';
 import { repeat } from './util';
+import { emptyVertex } from './vertex';
 
 const directionToString = Map<Point, string>([
   [NORTH, 'north'],
@@ -35,7 +35,7 @@ const roomWall = (room: Point) => (direction: Point) => {
 export function graphToWalls(graph: Map<Point, List<Point>>): List<Line> {
   const walls: Line[] = [];
   graph.forEach((doors, room) => {
-    const roomWalls = DIRECTIONS.filter((dir) => !doors.includes(addPoint(room)(dir))).map(
+    const roomWalls = DIRECTIONS.filter((dir) => !doors.includes(room.add(dir))).map(
       roomWall(room),
     );
     walls.push(...roomWalls);
@@ -51,7 +51,7 @@ export function graphToWalls(graph: Map<Point, List<Point>>): List<Line> {
  * @returns
  */
 export function renderMazeAscii(n: number, lines: List<Line>): string {
-  const mutableArray = new Array(n * 2).fill(undefined).map((_) => new Array(n * 2).fill(' '));
+  const mutableArray = repeat(undefined, n * 2).map((_) => repeat(' ', n * 2));
   return lines
     .reduce((arr, { a, b }) => {
       arr[a.y * 2][a.x * 2] = '+';
@@ -180,7 +180,7 @@ export function renderMazeSVG(n: number, squareSize: number, rooms: Map<Point, L
   const wallLines = rooms
     .reduce((allWalls, doors, room) => {
       const walls = [SOUTH, EAST]
-        .filter((dir) => !doors.includes(addPoint(dir)(room)))
+        .filter((dir) => !doors.includes(dir.add(room)))
         .map(addPoint(room))
         .map((adj) => [adj.x, adj.y, room.x + 1, room.y + 1])
         .map((pts) => pts.map((pt) => (pt + 1) * squareSize))

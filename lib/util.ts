@@ -47,6 +47,14 @@ export function shuffle<T>(startSeed: number, initialArray: ReadonlyArray<T>): [
   return [seed, array];
 }
 
-export function repeat<T>(value: T, n: number) {
+/**
+ * Repeat.
+ *
+ * Create an array filled with the given value, `value`, with `n` entries.
+ * @param value A value to repeat.
+ * @param n The number of times to repeat the value.
+ * @returns An array filled with the given value.
+ */
+export function repeat<T>(value: T, n: number): T[] {
   return new Array(n).fill(value);
 }

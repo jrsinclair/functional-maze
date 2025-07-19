@@ -1,11 +1,11 @@
-import { maze } from './main';
-import { graphToWalls, renderMazeText } from './render';
-import { p, addPoint, NORTH, EAST, SOUTH, WEST } from './point';
-import { RENDER_MAP } from './vertex';
-import { Line, line } from './line';
+import { fc, it } from '@fast-check/vitest';
 import { List, Set } from 'immutable';
 import { describe, expect } from 'vitest';
-import { it, fc } from '@fast-check/vitest';
+import { Line, line } from './line';
+import { maze } from './main';
+import { addPoint, EAST, NORTH, p, SOUTH, WEST } from './point';
+import { graphToWalls, renderMazeText } from './render';
+import { RENDER_MAP } from './vertex';
 
 const NESW = [
   ['N' as const, NORTH] as const,
