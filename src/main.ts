@@ -1,6 +1,6 @@
 import './style.css';
 
-import { maze, renderMazeSVG, renderMazeText, roomsToList } from '../lib/main';
+import { maze, renderMazeAsList, renderMazeSVG, renderMazeText } from '../lib/main';
 
 // const seed = Date.now();
 const seed = 1720301682563;
@@ -10,7 +10,7 @@ const mazeRooms = maze(n, seed);
 
 const WALL_SIZE = 25;
 
-const mazeAsList = roomsToList(mazeRooms);
+const mazeAsList = renderMazeAsList(mazeRooms);
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>

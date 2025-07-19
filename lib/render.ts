@@ -139,7 +139,7 @@ const doorsDescription = (doors: List<Point>, room: Point) => {
  *   adjacent rooms (a List of Point objects).
  * @returns An HTML string that represents the maze as an unordered list.
  */
-export function roomsToList(rooms: Map<Point, List<Point>>) {
+export function renderMazeAsList(rooms: Map<Point, List<Point>>) {
   return (
     '<ul class="room-list">' +
     rooms
